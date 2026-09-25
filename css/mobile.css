@@ -1,0 +1,340 @@
+/* Mobile / narrow-screen layout
+   Keeps the Monopoly board visible first and moves secondary panels below it. */
+
+@media (max-width: 760px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    min-width: 0;
+  }
+
+  header {
+    min-height: 58px;
+    height: auto;
+    padding: 8px 10px;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    backdrop-filter: blur(10px);
+  }
+
+  .brand {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .brandmark {
+    width: 34px;
+    height: 34px;
+    padding: 4px 7px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .brand .eyebrow {
+    font-size: 7px;
+    letter-spacing: 1.3px;
+    white-space: nowrap;
+  }
+
+  h1 {
+    font-size: 12px;
+    letter-spacing: .6px;
+    white-space: nowrap;
+  }
+
+  header nav {
+    gap: 3px;
+    flex-shrink: 0;
+  }
+
+  header nav button {
+    padding: 7px 8px;
+    font-size: 10px;
+    border-radius: 8px;
+  }
+
+  /* Board is the primary mobile content. */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    padding: 6px 6px 12px;
+    gap: 8px;
+  }
+
+  .layout > section {
+    order: 1;
+    width: 100%;
+  }
+
+  .left {
+    order: 2;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .right {
+    order: 3;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .left .section-title {
+    display: flex;
+    grid-column: 1 / -1;
+    margin: 2px 2px 0;
+    font-size: 9px;
+  }
+
+  .left .tip {
+    display: none;
+  }
+
+  .player {
+    min-width: 0;
+    padding: 8px;
+    margin: 0;
+    border-radius: 10px;
+  }
+
+  .player-top {
+    gap: 6px;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .player strong {
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tag {
+    font-size: 7px;
+  }
+
+  .money {
+    font-size: 15px;
+    margin: 5px 0;
+  }
+
+  .stats {
+    font-size: 8px;
+  }
+
+  .board-wrap {
+    width: 100%;
+    max-width: 100%;
+    padding: 3px;
+    border-radius: 12px;
+    box-shadow: 0 12px 25px #0007;
+  }
+
+  .board {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    gap: 1px;
+    padding: 2px;
+    border-radius: 8px;
+  }
+
+  .tile {
+    border-radius: 2px;
+    padding: 2px 1px;
+    font-size: 6px;
+  }
+
+  .tile b {
+    font-size: clamp(5px, 1.45vw, 8px);
+    line-height: 1.05;
+    padding-top: 3px;
+  }
+
+  .tile .symbol {
+    font-size: clamp(9px, 2.8vw, 16px);
+  }
+
+  .tile .price {
+    font-size: clamp(4px, 1.1vw, 6px);
+  }
+
+  .tile .strip {
+    height: 3px;
+  }
+
+  .center {
+    padding: 5px;
+    gap: 5px;
+    border-radius: 5px;
+  }
+
+  .center:before {
+    width: 72%;
+    height: 72%;
+  }
+
+  .islands {
+    font-size: clamp(15px, 5vw, 24px);
+    letter-spacing: 2px;
+  }
+
+  .logo {
+    font-size: clamp(19px, 6.8vw, 32px);
+    padding: 0 7px;
+    border-width: 2px;
+    letter-spacing: -1px;
+    box-shadow: 3px 4px 0 #071c2e;
+  }
+
+  .subtitle {
+    font-size: 7px;
+    letter-spacing: 3px;
+    margin-top: -3px;
+  }
+
+  .turn-pill {
+    font-size: 8px;
+    padding: 4px 9px;
+  }
+
+  .dice {
+    gap: 6px;
+  }
+
+  .die {
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    font-size: 24px;
+    box-shadow: 0 3px 0 #bdc8cc, 0 5px 10px #0004;
+  }
+
+  .status {
+    max-width: 190px;
+    min-height: 24px;
+    font-size: 8px;
+    line-height: 1.25;
+  }
+
+  .actions {
+    gap: 4px;
+  }
+
+  .actions button {
+    font-size: 8px;
+    padding: 6px 7px;
+    border-radius: 7px;
+  }
+
+  .deck-row {
+    display: none;
+  }
+
+  .below {
+    padding: 6px 2px 0;
+    font-size: 7px;
+    gap: 6px;
+  }
+
+  .below span {
+    white-space: nowrap;
+  }
+
+  .right .panel {
+    margin: 0;
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .right .section-title {
+    font-size: 9px;
+    margin-bottom: 8px;
+  }
+
+  .prop-list {
+    max-height: 150px;
+  }
+
+  .event-card,
+  .log {
+    font-size: 9px;
+  }
+
+  footer {
+    padding: 2px 8px 10px;
+    font-size: 8px;
+  }
+
+  /* Smaller player figures so they do not cover adjacent tiles. */
+  .pawn-figure {
+    scale: .65;
+  }
+
+  .pawn-base {
+    width: 15px;
+    height: 5px;
+    left: -7px;
+  }
+
+  .pawn-name {
+    font-size: 7px;
+    bottom: 26px;
+    max-width: 75px;
+    padding: 2px 3px;
+  }
+}
+
+@media (max-width: 420px) {
+  header nav button {
+    font-size: 9px;
+    padding: 6px;
+  }
+
+  .brand .eyebrow {
+    display: none;
+  }
+
+  h1 {
+    font-size: 11px;
+  }
+
+  .left {
+    gap: 4px;
+  }
+
+  .player {
+    padding: 6px;
+  }
+
+  .money {
+    font-size: 14px;
+  }
+
+  .center {
+    gap: 3px;
+  }
+
+  .actions button {
+    padding: 5px 6px;
+  }
+}
