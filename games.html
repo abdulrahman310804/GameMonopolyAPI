@@ -1,43 +1,19 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Game Center • Nusantara Board Game</title>
-  <link rel="stylesheet" href="css/games.css">
-</head>
-<body>
-  <header class="games-header">
-    <a class="back" href="index.html">← Monopoly</a>
-    <div>
-      <div class="eyebrow">NUSANTARA GAME CENTER</div>
-      <h1>Pilih Permainan</h1>
-    </div>
-  </header>
-
-  <main class="game-center">
-    <p class="intro">Selain Monopoli, pilih permainan lain untuk dimainkan langsung di browser.</p>
-    <div class="game-grid">
-      <a class="game-card chess-card" href="chess.html">
-        <div class="game-icon">♟</div>
-        <div class="game-info">
-          <span class="game-tag">STRATEGI</span>
-          <h2>Catur</h2>
-          <p>Permainan catur 2 pemain dengan papan 8×8 dan aturan gerak bidak dasar.</p>
-          <span class="play">Main sekarang →</span>
-        </div>
-      </a>
-
-      <a class="game-card blocks-card" href="blocks.html">
-        <div class="game-icon">🧱</div>
-        <div class="game-info">
-          <span class="game-tag">ARCADE</span>
-          <h2>Susun Balok</h2>
-          <p>Jatuhkan balok, susun baris penuh, dan dapatkan skor setinggi mungkin.</p>
-          <span class="play">Main sekarang →</span>
-        </div>
-      </a>
-    </div>
-  </main>
-</body>
-</html>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nusantara Game Center</title><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:24px;display:grid;place-items:center;background:#071522;color:#eefcff;font-family:Inter,system-ui,sans-serif}.wrap{width:min(900px,100%);text-align:center}.back{display:inline-block;color:#70e8d8;text-decoration:none;font-weight:800;font-size:13px;margin-bottom:24px}.eyebrow{text-transform:uppercase;letter-spacing:3px;font-size:10px;color:#70e8d8;font-weight:800}h1{font-size:clamp(30px,6vw,52px);margin:8px 0}.desc{color:#9db7c1;line-height:1.6}.modes{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}.mode{display:block;text-decoration:none;color:inherit;text-align:left;padding:26px;border:1px solid #ffffff18;border-radius:24px;background:#102333e8;box-shadow:0 18px 45px #0005;transition:.2s}.mode:hover{transform:translateY(-5px);border-color:#65e7d066}.mode-icon{font-size:46px;margin-bottom:16px}.mode h2{margin:0 0 8px;font-size:22px}.mode p{margin:0;color:#9db7c1;font-size:13px;line-height:1.6}.go{display:block;margin-top:20px;color:#65e7d0;font-weight:900;font-size:12px}.game{margin-top:30px;padding:28px;border:1px solid #ffffff18;border-radius:24px;background:#102333e8;box-shadow:0 18px 45px #0005}.picture{font-size:clamp(58px,12vw,105px);padding:28px;min-height:150px;display:grid;place-items:center}.scores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.score{padding:10px;border:1px solid #ffffff18;border-radius:12px}.score.active{border-color:#65e7d0}.score b{display:block}.score span{display:block;color:#ffd478;font-size:20px;font-weight:900}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:650px;margin:auto}.answers button,.actions button{border:1px solid #ffffff22;border-radius:11px;padding:13px;background:#173044;color:#eefcff;font-weight:800;cursor:pointer}.answers button:hover,.actions button:hover{border-color:#65e7d0}.primary{background:#65e7d0!important;color:#06251f!important}.message{min-height:24px;color:#ffd478;font-weight:800;margin:18px}.hidden{display:none}@media(max-width:650px){.modes{grid-template-columns:1fr}.scores{grid-template-columns:1fr 1fr}.answers{grid-template-columns:1fr}.game{padding:20px}}</style></head><body><main class="wrap"><a class="back" href="index.html">← Kembali pilih game</a><div class="eyebrow">NUSANTARA GAME CENTER</div><h1 id="title"></h1><p class="desc" id="desc"></p><section id="content"></section></main><script>
+const params=new URLSearchParams(location.search),game=params.get('game')||'monopoly',mode=params.get('mode')==='ai'?'ai':'local',content=document.getElementById('content');
+const info={monopoly:{title:'🎩 Monopoli Indonesia',desc:'Game sudah dipilih. Sekarang tentukan apakah bermain bersama teman atau melawan komputer.'},'tebak-gambar':{title:'🖼️ Tebak Gambar',desc:'Game sudah dipilih. Sekarang tentukan mode permainan.'}};
+document.getElementById('title').textContent=(info[game]||info.monopoly).title;document.getElementById('desc').textContent=(info[game]||info.monopoly).desc;
+if(!params.has('mode')){
+ content.innerHTML=game==='tebak-gambar'?'<div class="modes"><a class="mode" href="games.html?game=tebak-gambar&mode=local"><div class="mode-icon">👥</div><h2>Bersama Teman</h2><p>2–4 pemain bergantian pada perangkat yang sama.</p><span class="go">PILIH MODE →</span></a><a class="mode" href="games.html?game=tebak-gambar&mode=ai"><div class="mode-icon">🤖</div><h2>Lawan Komputer</h2><p>1 pemain melawan komputer secara otomatis.</p><span class="go">PILIH MODE →</span></a></div>':'<div class="modes"><a class="mode" href="monopoly.html?mode=local"><div class="mode-icon">👥</div><h2>Bersama Teman</h2><p>2–4 pemain bergantian menggunakan satu perangkat.</p><span class="go">PILIH MODE →</span></a><a class="mode" href="monopoly.html?mode=ai"><div class="mode-icon">🤖</div><h2>Lawan Komputer</h2><p>Anda sebagai pemain pertama, pemain lainnya dikendalikan komputer.</p><span class="go">PILIH MODE →</span></a></div>';
+}else if(game==='tebak-gambar'){
+ const questions=[['🌧️ + ☂️','Payung',['Payung','Pelangi','Hujan','Jas Hujan']],['⭐ + 🐟','Bintang Laut',['Ikan Mas','Bintang Laut','Ikan Terbang','Bintang Ikan']],['🍎 + 📱','Apple',['Android','Apple','Samsung','Nokia']],['🌞 + 🌻','Bunga Matahari',['Bunga Mawar','Matahari Terbit','Bunga Matahari','Bunga Teratai']],['🚗 + 🏠','Garasi',['Garasi','Terminal','Parkiran','Bengkel']],['🔥 + 🐟','Ikan Bakar',['Ikan Asap','Ikan Bakar','Ikan Goreng','Ikan Api']],['🌊 + 🏝️','Pantai',['Gunung','Pantai','Danau','Sungai']],['📚 + 🏫','Sekolah',['Perpustakaan','Sekolah','Kampus','Kantor']],['🍚 + 🐔','Nasi Ayam',['Nasi Goreng','Ayam Bakar','Nasi Ayam','Bubur Ayam']],['👑 + 🦁','Raja Hutan',['Raja Hutan','Singa Laut','Kepala Negara','Hewan Buas']],['🌙 + ⭐','Malam',['Pagi','Siang','Malam','Senja']],['🚲 + 🛣️','Bersepeda',['Berkendara','Bersepeda','Berjalan','Balapan']]];
+ let players=mode==='ai'?[{name:'Kamu',score:0},{name:'Komputer',score:0,ai:true}]:[1,2,3,4].map(i=>({name:'Pemain '+i,score:0})),q=0,turn=0,locked=false;
+ content.innerHTML='<div class="scores" id="scores"></div><div class="game"><div id="round" class="eyebrow"></div><div id="picture" class="picture"></div><div>Pilih jawaban yang paling sesuai.</div><div id="answers" class="answers"></div><div id="message" class="message"></div><div class="actions"><button id="next" class="primary hidden">Soal Berikutnya →</button><button id="restart">Mulai Ulang</button></div></div>';
+ const $=id=>document.getElementById(id);
+ function scores(){$('scores').innerHTML=players.map((p,i)=>'<div class="score '+(i===turn?'active':'')+'"><b>'+p.name+(p.ai?' 🤖':'')+'</b><span>'+p.score+'</span></div>').join('')}
+ function question(){locked=false;$('round').textContent='SOAL '+(q+1)+' / '+questions.length+' • GILIRAN '+players[turn].name.toUpperCase();$('picture').textContent=questions[q][0];$('message').textContent='';$('next').classList.add('hidden');$('answers').innerHTML=questions[q][2].map((x,i)=>'<button data-a="'+x.replace(/"/g,'&quot;')+'">'+String.fromCharCode(65+i)+'. '+x+'</button>').join('');$('answers').querySelectorAll('button').forEach(b=>b.onclick=()=>answer(b.dataset.a));if(players[turn].ai)setTimeout(ai,700)}
+ function answer(v){if(locked)return;locked=true;if(v===questions[q][1]){players[turn].score+=10;$('message').textContent='✅ Benar! +10 poin.'}else $('message').textContent='❌ Jawaban: '+questions[q][1];$('answers').querySelectorAll('button').forEach(b=>b.disabled=true);$('next').classList.remove('hidden');scores()}
+ function ai(){if(locked)return;const o=questions[q][2];answer(Math.random()<.65?questions[q][1]:o[Math.floor(Math.random()*o.length)])}
+ function next(){if(!locked)return;if(q===questions.length-1){$('round').textContent='PERMAINAN SELESAI';$('picture').textContent='🏆';$('answers').innerHTML='';$('message').textContent=players.map(p=>p.name+': '+p.score+' poin').join(' • ');$('next').textContent='Main Lagi';$('next').onclick=()=>location.reload();return}q++;turn=(turn+1)%players.length;question();scores()}
+ $('next').onclick=next;$('restart').onclick=()=>location.reload();scores();question();
+}
+</script></body></html>
