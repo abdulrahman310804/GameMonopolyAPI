@@ -1,0 +1,71 @@
+MONOPOLI INDONESIA — VERSI 6
+
+Ekstrak seluruh ZIP, lalu buka index.html di Chrome atau Edge.
+Folder css dan js harus tetap bersama index.html. Tidak perlu internet.
+
+BARU: RUMAH → VILA → HOTEL
+Harga properti wisata sudah termasuk rumah. Ketika kembali mendarat di
+properti sendiri, dialog upgrade terbuka. Boleh upgrade satu tingkat per
+kunjungan, tanpa harus melengkapi kelompok warna. Jika uang belum cukup,
+tombol dinonaktifkan; Anda tetap dapat menutup dialog dan melanjutkan.
+Vila: 4× sewa dasar. Hotel: 10× sewa dasar. Hotel adalah tingkat maksimum.
+Stasiun dan utilitas tidak dapat di-upgrade.
+Upgrade yang dilewati kedaluwarsa saat melempar lagi atau mengakhiri giliran.
+Turunkan vila/hotel untuk mendapat 50% biaya upgrade terakhir. Untuk gadai,
+turunkan menjadi rumah terlebih dahulu. Rumah dasar termasuk nilai properti.
+
+MODAL AWAL
+Rp1,5 juta — Nekat, cukup untuk 1–2 properti termurah; bonus MULAI Rp500 ribu.
+Rp3 juta — Cepat bangkrut, sekitar 1–2 properti kelas menengah; bonus Rp500 ribu.
+Rp5 juta — Seimbang; bonus MULAI Rp1 juta.
+Rp15 juta — Santai; bonus MULAI Rp2 juta.
+Jumlah properti yang bisa dibeli bergantung harga petak dan pengeluaran.
+Pajak dan denda tetap berlaku: mode modal kecil memang berisiko tinggi.
+
+WARNA PEMAIN
+Pemain 1: toska. Pemain 2: merah muda. Pemain 3: kuning. Pemain 4: ungu.
+Warna muncul pada karakter, petak yang dilewati, jejak gerakan, panel pemain,
+dan label giliran. Nama pemain aktif tampil di atas karakternya.
+
+STRUKTUR
+index.html / css/style.css / js/game.js / PANDUAN.txt
+Simpanan versi 3 terpisah dari versi 2 karena aturan bangunan berubah.
+
+VERSI 4 — AUDIO & DADU 3D
+- Musik arcade orisinal diputar setelah Anda menekan Mulai petualangan,
+  Lanjutkan simpanan, Lempar dadu, atau membuka pengaturan Suara.
+- Efek tersedia untuk dadu, langkah, pembelian, upgrade, pembayaran,
+  kartu, bonus MULAI, penjara, bangkrut, pergantian giliran, dan kemenangan.
+- Klik Suara untuk mengatur musik/efek secara terpisah, volume, dan bisu.
+- Tombol M membisukan semua suara. Musik dijeda saat tab disembunyikan.
+- Suara dibuat dengan Web Audio; tidak memerlukan MP3 atau internet.
+- Dadu memiliki enam sisi 3D. Angka akhir sesuai dengan jumlah langkah.
+- js/audio.js berisi musik/efek; js/dice.js berisi dadu 3D.
+- Aturan dan format simpanan tetap kompatibel dengan versi 3, tetapi akses
+  simpanan file lokal dapat bergantung lokasi folder dan browser.
+
+VERSI 5 — KARTU PEMAIN
+Klik Lihat kartu di panel masing-masing pemain, atau Kartu Pemain pada
+panel Portofolio. Pilih nama pemain untuk membandingkan koleksi.
+- Properti: sertifikat properti yang saat ini dimiliki, status rumah/vila/hotel,
+  gadai, serta rincian nilai dan sewa.
+- Disimpan: kartu bebas penjara yang belum dipakai.
+- Riwayat: kartu kesempatan/dana umum dengan efek yang sudah dijalankan,
+  kartu bebas penjara yang sudah dipakai, dan kartu yang hangus saat bangkrut.
+Kartu bebas penjara dipakai otomatis ketika memilih Bebas penjara dan memiliki
+kartu tersebut. Bonus/denda langsung berlaku, bukan kartu yang bisa dipakai ulang.
+Kartu tersimpan bersama permainan. Simpanan lama tetap memuat kartu bebas
+penjara yang masih ada; riwayat lama tidak dapat direkonstruksi.
+Melihat kartu pemain lain tidak mengganti giliran maupun kepemilikan kartu.
+js/cards.js mengatur tampilan koleksi dan pencatatan kartu per pemain.
+
+VERSI 6 — TUMPUKAN KARTU & PENANDA PROPERTI
+Saat mendarat di Kesempatan atau Dana Umum, kartu bergerak keluar dari
+tumpukan lalu berbalik menampilkan isinya. Klik Terapkan & lanjutkan
+untuk menjalankan efeknya. Tombol silang atau Esc juga melanjutkan dan
+menerapkan efek satu kali. Pemain komputer melanjutkan otomatis.
+Tumpukan adalah tampilan visual; pengambilan kartu tetap acak seperti semula.
+Properti yang dimiliki memakai bingkai dan latar sesuai warna pemilik,
+label P1–P4, serta ikon besar rumah/vila/hotel. Properti digadai memiliki
+label GADAI dan pola garis. Nomor pemilik tetap terlihat.
+js/decks.js mengatur animasi kartu dan ikon bangunan SVG.
