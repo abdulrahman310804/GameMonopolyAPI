@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tebak Gambar • Nusantara Game Center</title>
+<style>
+:root{--bg:#071522;--panel:#102333;--line:#ffffff18;--teal:#65e7d0;--text:#eefcff;--muted:#9db7c1;--gold:#ffd478}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% 10%,#16445c,transparent 28%),radial-gradient(circle at 85% 20%,#31265f,transparent 30%),var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);background:#071522dd;position:sticky;top:0;z-index:5}.back{color:var(--teal);text-decoration:none;font-weight:800}.title{display:flex;align-items:center;gap:10px}.title strong{font-size:15px}.mode{font-size:10px;color:var(--muted);letter-spacing:1px}
+main{width:min(900px,calc(100% - 32px));margin:28px auto}.scores{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}.score{padding:12px;border:1px solid var(--line);border-radius:14px;background:#102333cc}.score.active{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal) inset}.score b{display:block;font-size:13px}.score span{display:block;color:var(--gold);font-size:20px;font-weight:900;margin-top:3px}
+.card{padding:28px;border:1px solid var(--line);border-radius:24px;background:#102333e8;box-shadow:0 20px 50px #0006;text-align:center}.round{color:var(--teal);font-size:11px;letter-spacing:2px;font-weight:900}.picture{font-size:clamp(58px,12vw,110px);padding:28px 10px;letter-spacing:10px;min-height:150px;display:grid;place-items:center}.question{color:#9db7c1;margin-bottom:18px}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:620px;margin:auto}.answers button{border:1px solid #ffffff22;border-radius:12px;padding:14px;background:#172d3d;color:var(--text);font-weight:800;cursor:pointer}.answers button:hover{border-color:var(--teal);transform:translateY(-2px)}.answers button:disabled{opacity:.45;cursor:not-allowed}.message{min-height:24px;margin:18px 0 0;color:var(--gold);font-weight:800}.actions{margin-top:18px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.actions button,.primary{border:1px solid var(--teal);border-radius:10px;padding:11px 16px;background:#143447;color:var(--text);font-weight:800;cursor:pointer}.primary{background:var(--teal);color:#06251f;border-color:transparent}.hidden{display:none}
+@media(max-width:650px){.scores{grid-template-columns:repeat(2,1fr)}.answers{grid-template-columns:1fr}.card{padding:20px}.picture{min-height:120px}}
+</style></head>
+<body>
+<header><a class="back" href="index.html">← Pilih Game</a><div class="title"><span>🖼️</span><strong>TEBAK GAMBAR</strong></div><div class="mode" id="modeLabel"></div></header>
+<main><section class="scores" id="scores"></section><section class="card"><div class="round" id="round"></div><div class="picture" id="picture"></div><div class="question">Pilih jawaban yang paling sesuai dengan gambar.</div><div class="answers" id="answers"></div><div class="message" id="message" aria-live="polite"></div><div class="actions"><button id="nextBtn" class="primary hidden">Soal Berikutnya →</button><button id="restartBtn">Mulai Ulang</button></div></section></main>
+<script>
+const mode=new URLSearchParams(location.search).get('mode')==='ai'?'ai':'local';
+const questions=[
+{pic:'🌧️ + ☂️',answer:'Payung',options:['Payung','Pelangi','Hujan','Jas Hujan']},
+{pic:'⭐ + 🐟',answer:'Bintang Laut',options:['Ikan Mas','Bintang Laut','Ikan Terbang','Bintang Ikan']},
+{pic:'🍎 + 📱',answer:'Apple',options:['Android','Apple','Samsung','Nokia']},
+{pic:'🌞 + 🌻',answer:'Bunga Matahari',options:['Bunga Mawar','Matahari Terbit','Bunga Matahari','Bunga Teratai']},
+{pic:'🚗 + 🏠',answer:'Garasi',options:['Garasi','Terminal','Parkiran','Bengkel']},
+{pic:'🔥 + 🐟',answer:'Ikan Bakar',options:['Ikan Asap','Ikan Bakar','Ikan Goreng','Ikan Api']},
+{pic:'🌊 + 🏝️',answer:'Pantai',options:['Gunung','Pantai','Danau','Sungai']},
+{pic:'📚 + 🏫',answer:'Sekolah',options:['Perpustakaan','Sekolah','Kampus','Kantor']},
+{pic:'🍚 + 🐔',answer:'Nasi Ayam',options:['Nasi Goreng','Ayam Bakar','Nasi Ayam','Bubur Ayam']},
+{pic:'👑 + 🦁',answer:'Raja Hutan',options:['Raja Hutan','Singa Laut','Kepala Negara','Hewan Buas']},
+{pic:'🌙 + ⭐',answer:'Malam',options:['Pagi','Siang','Malam','Senja']},
+{pic:'🚲 + 🛣️',answer:'Bersepeda',options:['Berkendara','Bersepeda','Berjalan','Balapan']}
+];
+let q=0,players=[],turn=0,locked=false;
+const $=id=>document.getElementById(id);
+function init(){players=mode==='ai'?[{name:'Kamu',score:0},{name:'Komputer',score:0,ai:true}]:[{name:'Pemain 1',score:0},{name:'Pemain 2',score:0},{name:'Pemain 3',score:0},{name:'Pemain 4',score:0}];turn=0;q=0;locked=false;$('modeLabel').textContent=mode==='ai'?'VS KOMPUTER':'BERSAMA TEMAN';renderScores();renderQuestion()}
+function renderScores(){$('scores').innerHTML=players.map((p,i)=>'<div class="score '+(i===turn?'active':'')+'"><b>'+p.name+(p.ai?' 🤖':'')+'</b><span>'+p.score+'</span></div>').join('')}
+function renderQuestion(){locked=false;$('round').textContent='SOAL '+(q+1)+' / '+questions.length+' • GILIRAN '+players[turn].name.toUpperCase();$('picture').textContent=questions[q].pic;$('message').textContent='';$('nextBtn').classList.add('hidden');$('answers').innerHTML=questions[q].options.map((x,i)=>'<button type="button" data-answer="'+x.replace(/"/g,'&quot;')+'">'+String.fromCharCode(65+i)+'. '+x+'</button>').join('');$('answers').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>answer(b.dataset.answer)));if(players[turn].ai)setTimeout(aiAnswer,700)}
+function answer(value){if(locked)return;locked=true;const correct=value===questions[q].answer;if(correct){players[turn].score+=10;$('message').textContent='✅ Benar! +10 poin.'}else $('message').textContent='❌ Belum tepat. Jawaban: '+questions[q].answer;$('answers').querySelectorAll('button').forEach(b=>b.disabled=true);$('nextBtn').classList.remove('hidden');renderScores()}
+function aiAnswer(){if(locked)return;const choices=questions[q].options;const correct=Math.random()<.65?questions[q].answer:choices[Math.floor(Math.random()*choices.length)];answer(correct)}
+function next(){if(!locked)return;if(q===questions.length-1){finish();return}q++;turn=(turn+1)%players.length;renderQuestion();renderScores()}
+function finish(){const best=Math.max(...players.map(p=>p.score));$('round').textContent='PERMAINAN SELESAI';$('picture').textContent='🏆';$('question').textContent='';$('answers').innerHTML='';$('message').textContent=players.map(p=>p.name+': '+p.score+' poin').join(' • ');$('nextBtn').textContent='Main Lagi';$('nextBtn').classList.remove('hidden');$('nextBtn').onclick=init}
+$('nextBtn').addEventListener('click',next);$('restartBtn').addEventListener('click',init);init();
+</script></body></html>
