@@ -1,0 +1,148 @@
+/* Final mobile focus pass: Monopoly board first, controls/player cards compact. */
+@media (max-width: 760px) {
+  body { overflow-x: hidden; }
+
+  header {
+    min-height: 48px;
+    padding: 6px 8px;
+    gap: 5px;
+  }
+
+  .brand { gap: 6px; }
+  .brandmark { width: 30px; height: 30px; padding: 3px; font-size: 16px; border-radius: 9px; }
+  .brand .eyebrow { display: none; }
+  h1 { font-size: 11px; letter-spacing: .4px; }
+  header nav { gap: 2px; }
+  header nav button {
+    padding: 5px 6px;
+    font-size: 9px;
+    border-radius: 7px;
+  }
+  #soundBtn { font-size: 0; }
+  #soundBtn::after { content: '♫'; font-size: 12px; }
+  #saveBtn { font-size: 0; }
+  #saveBtn::after { content: '↧'; font-size: 12px; }
+  #helpBtn { width: 25px; padding: 5px 0; }
+  #newBtn { font-size: 0; }
+  #newBtn::after { content: '+'; font-size: 15px; }
+
+  .layout {
+    padding: 3px 4px 8px;
+    gap: 5px;
+  }
+
+  /* Board gets nearly the entire mobile viewport width. */
+  .layout > section { order: 1; }
+  .board-wrap {
+    width: 100%;
+    padding: 2px;
+    border-radius: 9px;
+  }
+  .board {
+    width: 100%;
+    gap: 1px;
+    padding: 2px;
+    border-radius: 7px;
+  }
+
+  /* Keep the center game controls compact so they don't visually dominate the board. */
+  .center { padding: 4px; gap: 4px; }
+  .islands { font-size: clamp(13px, 4.5vw, 21px); }
+  .logo { font-size: clamp(18px, 6.2vw, 29px); padding: 0 6px; }
+  .subtitle { font-size: 6px; letter-spacing: 2.5px; }
+  .turn-pill { font-size: 7px; padding: 3px 7px; }
+  .die { width: 27px; height: 27px; font-size: 21px; }
+  .status { max-width: 175px; min-height: 20px; font-size: 7px; }
+  .actions { gap: 3px; }
+  .actions button { font-size: 7px; padding: 5px 6px; }
+  .deck-row { display: none; }
+
+  .tile b { font-size: clamp(5px, 1.35vw, 7px); }
+  .tile .symbol { font-size: clamp(8px, 2.5vw, 14px); }
+  .tile .price { font-size: clamp(4px, 1vw, 5px); }
+
+  /* Player area becomes a compact status strip, not four large cards. */
+  .left {
+    order: 2;
+    display: flex;
+    width: 100%;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 1px 0 2px;
+    scrollbar-width: none;
+  }
+  .left::-webkit-scrollbar { display: none; }
+  .left .section-title,
+  .left .tip { display: none; }
+
+  .player {
+    flex: 0 0 112px;
+    min-width: 112px;
+    height: 48px;
+    padding: 5px 6px;
+    margin: 0;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 25px 1fr;
+    grid-template-rows: 19px 15px;
+    column-gap: 5px;
+    align-items: center;
+  }
+  .player-top { display: contents; }
+  .avatar {
+    grid-row: 1 / 3;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+  }
+  .player-top > div:last-child { min-width: 0; }
+  .player strong {
+    display: block;
+    font-size: 9px;
+    line-height: 10px;
+    max-width: 72px;
+  }
+  .tag { display: none; }
+  .money {
+    margin: 0;
+    font-size: 10px;
+    line-height: 12px;
+  }
+  .stats { display: none; }
+
+  /* The card action is a tiny button. */
+  .player-cards-button {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 30px;
+    height: 22px;
+    padding: 0 !important;
+    border-radius: 6px;
+    font-size: 0 !important;
+    display: grid;
+    place-items: center;
+  }
+  .player-cards-button::before {
+    content: '▣';
+    font-size: 10px;
+  }
+  .player-cards-button span { display: none; }
+
+  /* Hide secondary desktop panels on phone; their important actions remain accessible from the board. */
+  .right { order: 3; display: none; }
+  .below { padding: 3px 1px 0; font-size: 6px; }
+  footer { display: none; }
+
+  .pawn-figure { scale: .58; }
+  .pawn-base { width: 14px; height: 5px; left: -7px; }
+  .pawn-name { font-size: 6px; bottom: 24px; max-width: 65px; padding: 1px 3px; }
+}
+
+@media (max-width: 420px) {
+  header { padding: 5px 6px; }
+  header nav button { padding: 4px 5px; }
+  .player { flex-basis: 104px; min-width: 104px; }
+  .center { gap: 3px; }
+  .actions button { padding: 4px 5px; }
+}
