@@ -1,18 +1,208 @@
-const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d'),scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),bestEl=document.getElementById('best'),startOverlay=document.getElementById('startOverlay'),overOverlay=document.getElementById('overOverlay'),finalScore=document.getElementById('finalScore'),startBtn=document.getElementById('startBtn'),retryBtn=document.getElementById('retryBtn'),pauseBtn=document.getElementById('pauseBtn'),soundBtn=document.getElementById('soundBtn');
-let W=0,H=0,dpr=1,score=0,lives=3,best=Number(localStorage.getItem('catBest')||0),running=false,paused=false,raf=0,last=0,spawnTimer=0,keys={left:false,right:false},items=[],basket={x:0,y:0,w:190,h:42},touchActive=false,soundOn=true,audioCtx=null;const cats=['🐱','😺','😸','😻','😽','😹'];bestEl.textContent=best;
-function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);basket.y=H-48;basket.x=Math.max(0,Math.min(W-basket.w,basket.x||W/2-basket.w/2))}window.addEventListener('resize',resize);resize();
-function beep(freq,duration,type='sine',volume=.035){if(!soundOn)return;try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain(),n=audioCtx.currentTime;o.type=type;o.frequency.setValueAtTime(freq,n);o.frequency.exponentialRampToValueAtTime(freq*1.35,n+duration);g.gain.setValueAtTime(volume,n);g.gain.exponentialRampToValueAtTime(.0001,n+duration);o.connect(g);g.connect(audioCtx.destination);o.start(n);o.stop(n+duration)}catch(e){}}
-function cuteSound(k){if(k==='catch'){beep(620,.08,'triangle',.045);setTimeout(()=>beep(900,.09,'triangle',.035),55)}else if(k==='miss')beep(180,.16,'sawtooth',.025);else if(k==='start'){beep(520,.08);setTimeout(()=>beep(760,.1),70)}else if(k==='over'){beep(420,.12,'triangle');setTimeout(()=>beep(260,.22,'triangle'),100)}else beep(330,.08,'sine',.025)}
-function updateHud(){scoreEl.textContent=score;livesEl.textContent=lives;bestEl.textContent=best}
-function reset(){score=0;lives=3;items=[];spawnTimer=0;running=true;paused=false;basket.x=W/2-basket.w/2;startOverlay.classList.add('hidden');overOverlay.classList.add('hidden');pauseBtn.textContent='⏸ Jeda';updateHud();cuteSound('start');cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(loop)}
-function spawn(){const size=Math.max(52,Math.min(76,W*.13));items.push({x:Math.random()*(W-size),y:-size,size,vy:170+Math.random()*70+score*1.5,emoji:cats[Math.floor(Math.random()*cats.length)],rot:(Math.random()-.5)*.15})}
-function draw(){const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#102d42');g.addColorStop(1,'#071522');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let i=0;i<16;i++){ctx.fillStyle=i%2?'#65e7d00b':'#ef5d7009';ctx.beginPath();ctx.arc((i*83)%W,(i*137)%H,2+(i%4),0,Math.PI*2);ctx.fill()}items.forEach(it=>{ctx.save();ctx.translate(it.x+it.size/2,it.y+it.size/2);ctx.rotate(it.rot);ctx.font=it.size+'px "Apple Color Emoji","Segoe UI Emoji",sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(it.emoji,0,0);ctx.restore()});ctx.save();ctx.translate(basket.x,basket.y);ctx.fillStyle='#ef5d70';ctx.beginPath();ctx.roundRect(0,5,basket.w,basket.h,12);ctx.fill();ctx.fillStyle='#ffb3bd';ctx.beginPath();ctx.arc(18,12,4,0,Math.PI*2);ctx.arc(basket.w-18,12,4,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ffd0d6';ctx.lineWidth=4;ctx.beginPath();ctx.arc(basket.w/2,10,25,Math.PI,0);ctx.stroke();ctx.restore();if(paused&&running){ctx.fillStyle='#07152299';ctx.fillRect(0,0,W,H);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='900 28px system-ui';ctx.fillText('PAUSED',W/2,H/2)}}
-function moveTo(x){const r=canvas.getBoundingClientRect();basket.x=Math.max(0,Math.min(W-basket.w,x-r.left-basket.w/2))}
-function endGame(){running=false;overOverlay.classList.remove('hidden');finalScore.textContent=score;if(score>best){best=score;localStorage.setItem('catBest',best)}updateHud();cuteSound('over');draw()}
-function update(dt){const speed=430;if(keys.left)basket.x-=speed*dt;if(keys.right)basket.x+=speed*dt;basket.x=Math.max(0,Math.min(W-basket.w,basket.x));spawnTimer-=dt;if(spawnTimer<=0){spawn();spawnTimer=Math.max(.28,.72-score*.006)}for(let i=items.length-1;i>=0;i--){const it=items[i];it.y+=it.vy*dt;it.rot+=dt*.4;const cx=it.x+it.size/2,cy=it.y+it.size/2;if(cy+it.size*.3>=basket.y&&cy-it.size*.3<=basket.y+basket.h&&cx>=basket.x&&cx<=basket.x+basket.w){items.splice(i,1);score++;if(score>best)best=score;updateHud();cuteSound('catch');continue}if(it.y>H+20){items.splice(i,1);lives--;updateHud();cuteSound('miss');if(lives<=0){endGame();return}}}}
-function loop(now){if(!running)return;const dt=Math.min(.032,(now-last)/1000);last=now;if(!paused)update(dt);draw();raf=requestAnimationFrame(loop)}
-function togglePause(){if(!running)return;paused=!paused;pauseBtn.textContent=paused?'▶ Lanjut':'⏸ Jeda';cuteSound('pause')}
-function initAudio(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();audioCtx.resume()}catch(e){}}
-startBtn.onclick=()=>{initAudio();reset()};retryBtn.onclick=()=>{initAudio();reset()};pauseBtn.onclick=togglePause;soundBtn.onclick=()=>{soundOn=!soundOn;soundBtn.textContent=soundOn?'🔊 Suara ON':'🔇 Suara OFF';if(soundOn)cuteSound('catch')};
-canvas.addEventListener('pointerdown',e=>{touchActive=true;moveTo(e.clientX);canvas.setPointerCapture?.(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(touchActive)moveTo(e.clientX)});canvas.addEventListener('pointerup',()=>touchActive=false);canvas.addEventListener('pointercancel',()=>touchActive=false);
-document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'){keys.left=true;e.preventDefault()}if(e.key==='ArrowRight'){keys.right=true;e.preventDefault()}if(e.key===' '){e.preventDefault();togglePause()}});document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft')keys.left=false;if(e.key==='ArrowRight')keys.right=false});draw();
+let audioCtx=null;function cuteSound(freq=520,duration=.09,type="triangle",volume=.045){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime;o.type=type;o.frequency.setValueAtTime(freq,t);o.frequency.exponentialRampToValueAtTime(Math.max(50,freq*.7),t+duration);g.gain.setValueAtTime(volume,t);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+duration)}catch(e){}}
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const gameOverMessage = document.getElementById("gameOverMessage");
+const finalScoreElement = document.getElementById("finalScore");
+const retryButton = document.getElementById("retryButton");
+const pauseButton = document.getElementById("pauseButton");
+
+const introScreen = document.getElementById("introScreen");
+const newGameButton = document.getElementById("newGameButton");
+const difficultyButton = document.getElementById("difficultyButton");
+const highScoresButton = document.getElementById("highScoresButton");
+
+let score = 0;
+let ballRadius = 20;
+let x, y, dx, dy;
+const giantWidth = 150;
+const giantHeight = 20;
+let giantX;
+
+let rightPressed = false;
+let leftPressed = false;
+let gameOver = false;
+let paused = false;
+let difficultyLevel = 1;
+
+const ballImage = new Image();
+ballImage.src = "assets/cat/cat.png";
+const cryImage = new Image();
+cryImage.src = "assets/cat/catCry.png";
+const dieImage = new Image();
+dieImage.src = "assets/cat/dieCat.png";
+let currentBallImage = ballImage;
+
+let isMouseDown = false;
+let mouseX = 0;
+
+function resetGameVariables() {
+    x = canvas.width / 2;
+    y = canvas.height - 30;
+    dx = 2;
+    dy = -2;
+    giantX = (canvas.width - giantWidth) / 2;
+    score = 0;
+    gameOver = false;
+    currentBallImage = ballImage;
+}
+
+function startGame() { cuteSound(620,.08); setTimeout(()=>cuteSound(820,.1),80);
+    introScreen.style.display = "none";
+    canvas.style.display = "block";
+    gameStatus.style.display = "block";
+    pauseButton.style.display = "block";
+    resetGameVariables();
+    draw();
+}
+
+function displayGameOver() {
+    gameOver = true;
+    currentBallImage = dieImage;
+    finalScoreElement.textContent = score;
+    gameOverMessage.style.display = "block";
+}
+
+function restartGame() {
+    gameOverMessage.style.display = "none";
+    resetGameVariables();
+    updateScore();
+    draw();
+}
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth * 0.9;
+    canvas.height = window.innerHeight * 0.8;
+    giantX = (canvas.width - giantWidth) / 2;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+canvas.addEventListener("mousedown", mouseDownHandler, false);
+canvas.addEventListener("mousemove", mouseMoveHandler, false);
+canvas.addEventListener("mouseup", mouseUpHandler, false);
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+pauseButton.addEventListener("click", togglePause, false);
+retryButton.addEventListener("click", restartGame, false);
+
+function mouseDownHandler(e) {
+    if (e.button === 0) {
+        isMouseDown = true;
+        mouseX = e.clientX - canvas.getBoundingClientRect().left;
+    }
+}
+
+function mouseMoveHandler(e) {
+    if (isMouseDown) {
+        mouseX = e.clientX - canvas.getBoundingClientRect().left;
+        if (mouseX > 0 && mouseX < canvas.width) {
+            giantX = mouseX - giantWidth / 2;
+        }
+    }
+}
+
+function mouseUpHandler() {
+    isMouseDown = false;
+}
+
+canvas.addEventListener("touchstart", handleTouch, false);
+canvas.addEventListener("touchmove", handleTouch, false);
+
+function keyDownHandler(e) {
+    if (e.key === "Right" || e.key === "ArrowRight") {
+        rightPressed = true;
+    } else if (e.key === "Left" || e.key === "ArrowLeft") {
+        leftPressed = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if (e.key === "Right" || e.key === "ArrowRight") {
+        rightPressed = false;
+    } else if (e.key === "Left" || e.key === "ArrowLeft") {
+        leftPressed = false;
+    }
+}
+
+function handleTouch(e) {
+    e.preventDefault();
+    const touchX = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+    if (touchX > 0 && touchX < canvas.width) {
+        giantX = touchX - giantWidth / 2;
+    }
+}
+
+function togglePause() {
+    paused = !paused;
+    pauseButton.textContent = paused ? "Resume" : "Pause";
+    if (!paused) draw();
+}
+
+function drawBall() {
+    ctx.drawImage(currentBallImage, x - ballRadius * 2, y - ballRadius * 2, ballRadius * 4, ballRadius * 4);
+}
+
+function drawGiant() {
+    ctx.beginPath();
+    ctx.rect(giantX, canvas.height - giantHeight, giantWidth, giantHeight);
+    ctx.fillStyle = "#ff4081";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function updateScore() {
+    document.getElementById("gameStatus").innerText = `Score: ${score}`;
+}
+
+function draw() {
+    if (gameOver || paused) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawBall();
+    drawGiant();
+
+    if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+        dx = -dx;
+        currentBallImage = cryImage;
+        setTimeout(() => {
+            currentBallImage = gameOver ? dieImage : ballImage;
+        }, 200);
+    }
+
+    if (y + dy < ballRadius) {
+        dy = -dy;
+        currentBallImage = cryImage;
+        setTimeout(() => {
+            currentBallImage = gameOver ? dieImage : ballImage;
+        }, 200);
+    } else if (y + dy > canvas.height - ballRadius) {
+        if (x > giantX && x < giantX + giantWidth) {
+            dy = -dy;
+            score++; cuteSound(820,.08);
+            updateScore();
+        } else {
+            cuteSound(260,.22,"triangle",.05); displayGameOver();
+        }
+    }
+
+    x += dx;
+    y += dy;
+
+    if (rightPressed && giantX < canvas.width - giantWidth) {
+        giantX += 7;
+    } else if (leftPressed && giantX > 0) {
+        giantX -= 7;
+    }
+
+    requestAnimationFrame(draw);
+}
+
+newGameButton.addEventListener("click", startGame);
+difficultyButton.addEventListener("click", () => alert("Difficulty settings coming soon!"));
+highScoresButton.addEventListener("click", () => alert("High scores feature coming soon!"));
+
+// Hide game elements initially
+document.getElementById("gameStatus").style.display = "none";
+pauseButton.style.display = "none";

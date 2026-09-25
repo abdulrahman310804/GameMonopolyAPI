@@ -1,1 +1,143 @@
-<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Tangkap Kucing • Nusantara Game Center</title><link rel="stylesheet" href="css/game-board.css"><style>*{box-sizing:border-box}body{min-height:100vh;margin:0;background:#071522;color:#eefcff;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}.cat-wrap{width:min(1050px,100%);margin:auto;padding:18px}.cat-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.cat-top a{color:#65e7d0;text-decoration:none;font-weight:800;font-size:13px}.cat-title{margin:0;font-size:clamp(22px,4vw,34px)}.cat-sub{margin:4px 0 0;color:#9db7c1;font-size:12px}.cat-hud{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.hud{min-width:92px;padding:10px 14px;border:1px solid #ffffff18;border-radius:16px;background:#102333e8;text-align:center}.hud small{display:block;color:#8faab5;font-size:9px;font-weight:800;letter-spacing:1px}.hud b{font-size:20px}.cat-stage{position:relative;overflow:hidden;border:1px solid #65e7d033;border-radius:28px;background:#0b1d2a;box-shadow:0 24px 70px #0007}#gameCanvas{display:block;width:100%;height:min(70vh,680px);min-height:430px;touch-action:none}.cat-actions{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}.cat-btn{border:1px solid #ffffff18;border-radius:14px;background:#102333;color:#eefcff;padding:11px 18px;font-weight:900;cursor:pointer}.cat-btn.primary{background:#ef5d70;border-color:#ef5d70}.cat-help{text-align:center;color:#8faab5;font-size:11px;line-height:1.5;margin:12px auto 0;max-width:680px}.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#071522d9;padding:20px}.card{width:min(430px,100%);text-align:center;padding:28px;border:1px solid #ffffff18;border-radius:24px;background:#102333f5;box-shadow:0 20px 60px #0008}.card .emoji{font-size:58px;line-height:1;margin-bottom:10px}.card h2{margin:0 0 8px;font-size:28px}.card p{margin:0;color:#9db7c1;line-height:1.6;font-size:13px}.card .score{font-size:42px;font-weight:1000;color:#65e7d0;margin:10px 0 16px}.hidden{display:none}@media(max-width:600px){.cat-wrap{padding:12px}.cat-top{align-items:flex-start}.cat-stage{border-radius:20px}#gameCanvas{min-height:430px;height:68vh}.hud{min-width:76px;padding:8px 10px}.hud b{font-size:17px}}</style></head><body><main class="cat-wrap"><header class="cat-top"><div><a href="index.html">← Pilih Game</a><h1 class="cat-title">🐱 Tangkap Kucing</h1><p class="cat-sub">Adaptasi permainan catch-and-paddle • main sendiri</p></div><div class="cat-hud"><div class="hud"><small>SKOR</small><b id="score">0</b></div><div class="hud"><small>NYAWA</small><b id="lives">3</b></div><div class="hud"><small>TERTINGGI</small><b id="best">0</b></div></div></header><section class="cat-stage"><canvas id="gameCanvas"></canvas><div class="overlay" id="startOverlay"><div class="card"><div class="emoji">🐱</div><h2>Siap menangkap?</h2><p>Gerakkan keranjang dengan sentuhan. Tangkap kucing yang jatuh, hindari yang terlewat, dan kejar skor tertinggi!</p><div style="height:14px"></div><button class="cat-btn primary" id="startBtn">🐾 Mulai Main</button></div></div><div class="overlay hidden" id="overOverlay"><div class="card"><div class="emoji">😿</div><h2>Meong... Game Over!</h2><p>Kucing yang tertangkap:</p><div class="score" id="finalScore">0</div><button class="cat-btn primary" id="retryBtn">🐾 Main Lagi</button></div></div></section><div class="cat-actions"><button class="cat-btn" id="pauseBtn">⏸ Jeda</button><button class="cat-btn" id="soundBtn">🔊 Suara ON</button></div><p class="cat-help">📱 Android: sentuh dan geser jari di papan untuk menggerakkan keranjang. 💻 Desktop: gunakan mouse atau tombol ← →. Suara dibuat langsung di browser, jadi tidak perlu file audio tambahan.</p></main><script src="js/cat-game.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawaii Cat • Nusantara Game Center</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fce4ec;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            position: relative;
+        }
+
+        canvas {
+            display: none;
+            background-color: #e1f5fe;
+            border: 4px solid #ff80ab;
+            border-radius: 15px;
+        }
+
+        #introScreen, #gameOverMessage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 24px;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            color: #ff4081;
+            background-color: #fff0f5;
+            padding: 30px;
+            border-radius: 20px;
+            border: 4px solid #ff80ab;
+            box-shadow: 0 0 20px rgba(255, 128, 171, 0.5);
+        }
+
+        #introScreen h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ff4081;
+            text-shadow: 2px 2px 4px rgba(255, 128, 171, 0.5);
+        }
+
+        .menuButton {
+            padding: 12px 24px;
+            margin: 10px;
+            background-color: #ff80ab;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(255, 128, 171, 0.5);
+        }
+
+        .menuButton:hover {
+            background-color: #ff4081;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(255, 128, 171, 0.7);
+        }
+
+        #gameStatus {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff4081;
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(255, 128, 171, 0.5);
+        }
+
+        #pauseButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: #ff80ab;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 30px;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(255, 128, 171, 0.5);
+        }
+
+        #pauseButton:hover {
+            background-color: #ff4081;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(255, 128, 171, 0.7);
+        }
+
+        #gameOverMessage {
+            display: none;
+            background-color: #fff0f5;
+            border: 4px solid #ff80ab;
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .kawaii-decoration {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+        }
+
+        #paw1 { top: 10px; left: 10px; }
+        #paw2 { top: 10px; right: 10px; }
+        #paw3 { bottom: 10px; left: 10px; }
+        #paw4 { bottom: 10px; right: 10px; }
+    </style>
+</head>
+<body><a href="index.html" style="position:fixed;top:14px;left:16px;z-index:20;color:#ff4081;font-weight:bold;text-decoration:none;background:#fff0f5;padding:8px 14px;border-radius:20px;border:2px solid #ff80ab">← Game Center</a>
+    <div id="introScreen">
+        <h1>Kawaii Cat Game</h1>
+        <button class="menuButton" id="newGameButton">New Game</button>
+        <button class="menuButton" id="difficultyButton">Difficulty</button>
+        <button class="menuButton" id="highScoresButton">High Scores</button>
+        <img src="assets/cat/paw.png" alt="Paw" class="kawaii-decoration" id="paw1">
+        <img src="assets/cat/paw.png" alt="Paw" class="kawaii-decoration" id="paw2">
+        <img src="assets/cat/paw.png" alt="Paw" class="kawaii-decoration" id="paw3">
+        <img src="assets/cat/paw.png" alt="Paw" class="kawaii-decoration" id="paw4">
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameStatus">Score: 0</div>
+    <button id="pauseButton">Pause</button>
+    <div id="gameOverMessage">
+        <p>Game Over! Your score: <span id="finalScore">0</span></p>
+        <button id="retryButton" class="menuButton">Try Again</button>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
