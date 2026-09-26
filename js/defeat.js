@@ -26,6 +26,6 @@
     const o=document.createElement('div');o.className='cat-defeat-overlay';
     o.innerHTML='<div class="cat-defeat-card"><div class="cat-defeat-emoji">😹</div><h2>WKWK, KALAH! 😹</h2><p>'+String(message).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</p><button type="button">COBA LAGI</button></div>';
     document.body.appendChild(o);
-    o.querySelector('button').onclick=()=>o.remove();
+    o.querySelector('button').onclick=()=>location.reload();
   };
 })();
