@@ -330,7 +330,7 @@ function draw() {
   if (!hasAnyMove() && pieces.some(p => !p.used)) drawGameOver();
 }
 
-function drawGameOver() {
+function drawGameOver() { window.showCatDefeat?.('Tidak ada langkah lagi. Baloknya menang, kamu kalah 😹');
   ctx.fillStyle = 'rgba(5,8,15,.78)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = '#fff';
