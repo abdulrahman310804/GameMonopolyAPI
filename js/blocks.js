@@ -1,17 +1,364 @@
-const canvas=document.getElementById('gameCanvas');const ctx=canvas.getContext('2d');const scoreEl=document.getElementById('score');const levelEl=document.getElementById('level');const linesEl=document.getElementById('lines');const W=10,H=20,S=30;const shapes=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]],[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]]];let grid=[],piece=null,score=0,lines=0,level=1,raf=0,last=0,over=false,touchX=0,touchY=0,touchMoved=false,lastTap=0;
-function reset(){cancelAnimationFrame(raf);grid=Array.from({length:H},()=>Array(W).fill(0));score=0;lines=0;level=1;over=false;spawn();last=performance.now();update();draw();raf=requestAnimationFrame(loop)}
-function spawn(){const s=shapes[Math.floor(Math.random()*shapes.length)];piece={shape:s.map(r=>r.slice()),x:Math.floor((W-s[0].length)/2),y:0};if(collides(piece.shape,piece.x,piece.y))over=true}
-function collides(shape,x,y){for(let r=0;r<shape.length;r++)for(let c=0;c<shape[r].length;c++){if(!shape[r][c])continue;const gx=x+c,gy=y+r;if(gx<0||gx>=W||gy>=H)return true;if(gy>=0&&grid[gy][gx])return true}return false}
-function merge(){piece.shape.forEach((row,r)=>row.forEach((v,c)=>{if(v&&piece.y+r>=0)grid[piece.y+r][piece.x+c]=1}))}
-function clearLines(){let count=0;grid=grid.filter(row=>{if(row.every(Boolean)){count++;return false}return true});while(grid.length<H)grid.unshift(Array(W).fill(0));if(count){lines+=count;score+=([0,100,300,500,800][count]||800)*level;level=Math.floor(lines/10)+1;update()}}
-function move(dx){if(!over&&!collides(piece.shape,piece.x+dx,piece.y)){piece.x+=dx;draw()}}
-function rotate(){if(over)return;const old=piece.shape;const rot=old[0].map((_,i)=>old.map(row=>row[i]).reverse());let x=piece.x;if(collides(rot,x,piece.y)){if(!collides(rot,x-1,piece.y))x--;else if(!collides(rot,x+1,piece.y))x++;else return}piece.shape=rot;piece.x=x;draw()}
-function drop(){if(over)return;if(!collides(piece.shape,piece.x,piece.y+1))piece.y++;else{merge();clearLines();spawn()}draw()}
-function hardDrop(){if(over)return;while(!collides(piece.shape,piece.x,piece.y+1))piece.y++;drop()}
-function update(){scoreEl.textContent=score;levelEl.textContent=level;linesEl.textContent=lines}
-function drawCell(x,y,active){ctx.fillStyle=active?'#65e7d0':'#33415e';ctx.fillRect(x*S+1,y*S+1,S-2,S-2);ctx.strokeStyle='#ffffff16';ctx.strokeRect(x*S+1,y*S+1,S-2,S-2)}
-function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#080d18';ctx.fillRect(0,0,canvas.width,canvas.height);grid.forEach((row,y)=>row.forEach((v,x)=>{if(v)drawCell(x,y,false)}));if(piece&&!over)piece.shape.forEach((row,r)=>row.forEach((v,c)=>{if(v&&piece.y+r>=0)drawCell(piece.x+c,piece.y+r,true)}));if(over){ctx.fillStyle='#080d18cc';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='bold 26px system-ui';ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2-10);ctx.font='13px system-ui';ctx.fillText('Ketuk 2× untuk mulai ulang',canvas.width/2,canvas.height/2+18)}}
-function loop(now){if(now-last>=Math.max(120,750-(level-1)*55)){drop();last=now}raf=requestAnimationFrame(loop)}
-function act(action){if(action==='left')move(-1);else if(action==='right')move(1);else if(action==='rotate')rotate();else if(action==='down')hardDrop()}
-document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft')act('left');else if(e.key==='ArrowRight')act('right');else if(e.key==='ArrowUp')act('rotate');else if(e.key==='ArrowDown')drop();else if(e.key===' ')hardDrop()});
-canvas.addEventListener('touchstart',e=>{const t=e.changedTouches[0];touchX=t.clientX;touchY=t.clientY;touchMoved=false},{passive:true});canvas.addEventListener('touchmove',e=>{e.preventDefault();const t=e.changedTouches[0],dx=t.clientX-touchX,dy=t.clientY-touchY;if(Math.abs(dx)>18||Math.abs(dy)>18)touchMoved=true},{passive:false});canvas.addEventListener('touchend',e=>{e.preventDefault();const t=e.changedTouches[0],dx=t.clientX-touchX,dy=t.clientY-touchY,now=Date.now();if(over&&Math.abs(dx)<35&&Math.abs(dy)<35){if(now-lastTap<450)reset();lastTap=now;return}if(Math.abs(dx)>35&&Math.abs(dx)>Math.abs(dy)){act(dx>0?'right':'left')}else if(dy>45){act('down')}else if(Math.abs(dx)<35&&Math.abs(dy)<35){if(now-lastTap>450)act('rotate');lastTap=now}},{passive:false});reset();
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const levelEl = document.getElementById('level');
+const linesEl = document.getElementById('lines');
+
+// Block Blast-style puzzle: 8x8 board, 3 pieces at the bottom,
+// no falling blocks. Place pieces manually and clear full rows/columns.
+const BOARD = 8;
+const CELL = 38;
+const BOARD_X = 18;
+const BOARD_Y = 18;
+const BOARD_SIZE = BOARD * CELL;
+const TRAY_Y = BOARD_Y + BOARD_SIZE + 45;
+const SLOT_W = 105;
+const TRAY_CENTERS = [72, 180, 288];
+
+const COLORS = ['#4fc3f7', '#7e57c2', '#ffb74d', '#ef5350', '#66bb6a', '#ffee58', '#ec407a'];
+const SHAPES = [
+  [[1]],
+  [[1, 1]],
+  [[1, 1, 1]],
+  [[1, 1, 1, 1]],
+  [[1], [1]],
+  [[1], [1], [1]],
+  [[1], [1], [1], [1]],
+  [[1, 1], [1, 1]],
+  [[1, 1, 1], [1, 1, 1]],
+  [[1, 1], [1, 1], [1, 1]],
+  [[1, 1, 1], [0, 1, 0]],
+  [[1, 0], [1, 1], [0, 1]],
+  [[0, 1], [1, 1], [1, 0]],
+  [[1, 1, 0], [0, 1, 1]],
+  [[0, 1, 1], [1, 1, 0]],
+  [[1, 1, 1], [1, 0, 0]],
+  [[1, 1, 1], [0, 0, 1]],
+  [[1, 1, 1], [0, 1, 1]],
+  [[1, 0, 0], [1, 1, 1]],
+  [[0, 0, 1], [1, 1, 1]]
+];
+
+let board = [];
+let pieces = [];
+let score = 0;
+let lines = 0;
+let level = 1;
+let dragging = null;
+let pointerId = null;
+let dragX = 0;
+let dragY = 0;
+let previewCell = null;
+
+function cloneShape(shape) {
+  return shape.map(row => row.slice());
+}
+
+function randomPiece() {
+  const shape = cloneShape(SHAPES[Math.floor(Math.random() * SHAPES.length)]);
+  return {
+    shape,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    used: false,
+    x: 0,
+    y: 0
+  };
+}
+
+function newPieces() {
+  pieces = [randomPiece(), randomPiece(), randomPiece()];
+}
+
+function reset() {
+  board = Array.from({ length: BOARD }, () => Array(BOARD).fill(null));
+  score = 0;
+  lines = 0;
+  level = 1;
+  dragging = null;
+  previewCell = null;
+  newPieces();
+  update();
+  draw();
+}
+
+function update() {
+  scoreEl.textContent = score.toLocaleString('id-ID');
+  levelEl.textContent = level;
+  linesEl.textContent = lines;
+}
+
+function boardCellFromPoint(px, py) {
+  const col = Math.floor((px - BOARD_X) / CELL);
+  const row = Math.floor((py - BOARD_Y) / CELL);
+  if (col < 0 || col >= BOARD || row < 0 || row >= BOARD) return null;
+  return { col, row };
+}
+
+function canPlace(piece, row, col) {
+  for (let r = 0; r < piece.shape.length; r++) {
+    for (let c = 0; c < piece.shape[r].length; c++) {
+      if (!piece.shape[r][c]) continue;
+      const br = row + r;
+      const bc = col + c;
+      if (br < 0 || br >= BOARD || bc < 0 || bc >= BOARD) return false;
+      if (board[br][bc]) return false;
+    }
+  }
+  return true;
+}
+
+function place(piece, row, col) {
+  for (let r = 0; r < piece.shape.length; r++) {
+    for (let c = 0; c < piece.shape[r].length; c++) {
+      if (piece.shape[r][c]) board[row + r][col + c] = piece.color;
+    }
+  }
+
+  const cleared = clearCompleted();
+  const blockCount = piece.shape.flat().filter(Boolean).length;
+  score += blockCount * 5;
+  if (cleared.total > 0) {
+    const comboBonus = cleared.total > 1 ? cleared.total * 25 : 0;
+    score += cleared.total * 100 + comboBonus;
+    lines += cleared.total;
+    level = Math.floor(lines / 5) + 1;
+  }
+
+  piece.used = true;
+  if (pieces.every(p => p.used)) newPieces();
+  update();
+  draw();
+
+  if (!hasAnyMove()) {
+    setTimeout(() => drawGameOver(), 100);
+  }
+}
+
+function clearCompleted() {
+  const rows = [];
+  const cols = [];
+
+  for (let r = 0; r < BOARD; r++) {
+    if (board[r].every(Boolean)) rows.push(r);
+  }
+  for (let c = 0; c < BOARD; c++) {
+    let full = true;
+    for (let r = 0; r < BOARD; r++) {
+      if (!board[r][c]) {
+        full = false;
+        break;
+      }
+    }
+    if (full) cols.push(c);
+  }
+
+  if (!rows.length && !cols.length) return { total: 0 };
+
+  const remove = new Set();
+  rows.forEach(r => { for (let c = 0; c < BOARD; c++) remove.add(`${r},${c}`); });
+  cols.forEach(c => { for (let r = 0; r < BOARD; r++) remove.add(`${r},${c}`); });
+
+  remove.forEach(key => {
+    const [r, c] = key.split(',').map(Number);
+    board[r][c] = null;
+  });
+
+  return { total: rows.length + cols.length };
+}
+
+function hasAnyMove() {
+  for (const piece of pieces) {
+    if (piece.used) continue;
+    for (let r = 0; r < BOARD; r++) {
+      for (let c = 0; c < BOARD; c++) {
+        if (canPlace(piece, r, c)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function pointerToCanvas(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+  };
+}
+
+function pieceAt(x, y) {
+  for (let i = 0; i < pieces.length; i++) {
+    const p = pieces[i];
+    if (p.used) continue;
+    const w = p.shape[0].length * 25;
+    const h = p.shape.length * 25;
+    const cx = TRAY_CENTERS[i];
+    const top = TRAY_Y + 15;
+    if (x >= cx - Math.max(45, w / 2) && x <= cx + Math.max(45, w / 2) &&
+        y >= top - 15 && y <= top + Math.max(65, h)) return i;
+  }
+  return -1;
+}
+
+function startDrag(e) {
+  if (dragging) return;
+  const p = pointerToCanvas(e);
+  const index = pieceAt(p.x, p.y);
+  if (index < 0) return;
+
+  const target = pieces[index];
+  dragging = { index, piece: target };
+  pointerId = e.pointerId;
+  canvas.setPointerCapture?.(pointerId);
+  updateDrag(p.x, p.y);
+  draw();
+  e.preventDefault();
+}
+
+function updateDrag(x, y) {
+  if (!dragging) return;
+  dragX = x;
+  dragY = y;
+  const col = Math.floor((x - BOARD_X) / CELL - dragging.piece.shape[0].length / 2 + 0.5);
+  const row = Math.floor((y - BOARD_Y) / CELL - dragging.piece.shape.length / 2 + 0.5);
+  if (canPlace(dragging.piece, row, col)) {
+    previewCell = { row, col, valid: true };
+  } else {
+    previewCell = { row, col, valid: false };
+  }
+}
+
+function moveDrag(e) {
+  if (!dragging || e.pointerId !== pointerId) return;
+  const p = pointerToCanvas(e);
+  updateDrag(p.x, p.y);
+  draw();
+  e.preventDefault();
+}
+
+function endDrag(e) {
+  if (!dragging || e.pointerId !== pointerId) return;
+  const current = dragging;
+  const preview = previewCell;
+  dragging = null;
+  pointerId = null;
+  previewCell = null;
+
+  if (preview?.valid) place(current.piece, preview.row, preview.col);
+  else draw();
+  e.preventDefault();
+}
+
+function drawRoundedRect(x, y, w, h, radius, fill, stroke = null) {
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, radius);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke) {
+    ctx.strokeStyle = stroke;
+    ctx.stroke();
+  }
+}
+
+function drawBlock(x, y, color, size = CELL, alpha = 1) {
+  ctx.globalAlpha = alpha;
+  drawRoundedRect(x + 2, y + 2, size - 4, size - 4, 5, color);
+  ctx.fillStyle = 'rgba(255,255,255,.18)';
+  ctx.fillRect(x + 5, y + 5, size - 10, 3);
+  ctx.fillStyle = 'rgba(0,0,0,.16)';
+  ctx.fillRect(x + 5, y + size - 8, size - 10, 3);
+  ctx.globalAlpha = 1;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#080d18';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Board panel
+  drawRoundedRect(7, 7, BOARD_SIZE + 22, BOARD_SIZE + 22, 12, '#111a2c');
+
+  // Empty cells
+  for (let r = 0; r < BOARD; r++) {
+    for (let c = 0; c < BOARD; c++) {
+      const x = BOARD_X + c * CELL;
+      const y = BOARD_Y + r * CELL;
+      drawRoundedRect(x + 3, y + 3, CELL - 6, CELL - 6, 5, '#1b2740');
+      if (board[r][c]) drawBlock(x, y, board[r][c]);
+    }
+  }
+
+  // Placement preview
+  if (dragging && previewCell) {
+    const p = dragging.piece;
+    for (let r = 0; r < p.shape.length; r++) {
+      for (let c = 0; c < p.shape[r].length; c++) {
+        if (!p.shape[r][c]) continue;
+        const x = BOARD_X + (previewCell.col + c) * CELL;
+        const y = BOARD_Y + (previewCell.row + r) * CELL;
+        if (previewCell.valid && previewCell.row + r >= 0 && previewCell.col + c >= 0 && previewCell.row + r < BOARD && previewCell.col + c < BOARD) {
+          drawBlock(x, y, p.color, CELL, 0.48);
+        }
+      }
+    }
+  }
+
+  ctx.fillStyle = '#9db7c1';
+  ctx.font = '700 12px system-ui';
+  ctx.textAlign = 'center';
+  ctx.fillText('SERET BALOK KE PAPAN', canvas.width / 2, TRAY_Y - 12);
+
+  // Piece tray
+  for (let i = 0; i < pieces.length; i++) {
+    const p = pieces[i];
+    const cx = TRAY_CENTERS[i];
+    drawRoundedRect(cx - 48, TRAY_Y, 96, 92, 12, p.used ? '#0f1726' : '#111a2c');
+    if (p.used) continue;
+
+    const mini = 25;
+    const w = p.shape[0].length * mini;
+    const h = p.shape.length * mini;
+    const sx = cx - w / 2;
+    const sy = TRAY_Y + 46 - h / 2;
+    for (let r = 0; r < p.shape.length; r++) {
+      for (let c = 0; c < p.shape[r].length; c++) {
+        if (p.shape[r][c]) drawBlock(sx + c * mini, sy + r * mini, p.color, mini);
+      }
+    }
+  }
+
+  if (!hasAnyMove() && pieces.some(p => !p.used)) drawGameOver();
+}
+
+function drawGameOver() {
+  ctx.fillStyle = 'rgba(5,8,15,.78)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.font = '800 28px system-ui';
+  ctx.fillText('GAME OVER', canvas.width / 2, BOARD_Y + BOARD_SIZE / 2 - 5);
+  ctx.font = '600 13px system-ui';
+  ctx.fillStyle = '#b9c9d1';
+  ctx.fillText('Klik atau ketuk untuk bermain lagi', canvas.width / 2, BOARD_Y + BOARD_SIZE / 2 + 24);
+}
+
+canvas.addEventListener('pointerdown', e => {
+  if (!hasAnyMove() && pieces.some(p => !p.used)) {
+    reset();
+    return;
+  }
+  startDrag(e);
+});
+canvas.addEventListener('pointermove', moveDrag);
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+canvas.addEventListener('pointerleave', e => {
+  if (dragging && e.pointerType === 'mouse') moveDrag(e);
+});
+
+// Prevent browser scrolling while dragging on touch screens.
+canvas.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+canvas.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+canvas.addEventListener('touchend', e => e.preventDefault(), { passive: false });
+
+reset();
