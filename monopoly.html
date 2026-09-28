@@ -9,8 +9,10 @@ window.addEventListener('load',function(){
     const mode=document.getElementById('modeInput');
     if(mode){
       mode.value=wanted;
-      const row=mode.closest('.formrow');
-      if(row) row.style.display='none';
+      // Hanya sembunyikan pilihan mode karena mode sudah dipilih dari halaman sebelumnya.
+      // Jangan sembunyikan seluruh .formrow agar pilihan jumlah pemain tetap terlihat.
+      const modeField=mode.parentElement;
+      if(modeField) modeField.style.display='none';
       if(typeof renderNameFields==='function') renderNameFields();
     }
   };
