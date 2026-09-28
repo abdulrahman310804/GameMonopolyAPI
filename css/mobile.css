@@ -1,21 +1,27 @@
 /* ============================================================
    MOBILE ANDROID — 9:16 GAME VIEW
-   Papan menjadi fokus utama, full width, tanpa memaksa desktop
-   menjadi kecil. Petak dibuat lebih lega, nama tempat ringkas,
-   warna grup lebih hidup, dan ikon tidak mengambil ruang.
+   Papan fokus utama + palet warna harmonis.
    ============================================================ */
 @media (max-width:760px){
-  :root{--mobile-side:0px}
+  :root{
+    --mobile-bg:#f3eadb;
+    --mobile-ink:#24323a;
+    --mobile-navy:#243b45;
+    --mobile-cream:#fffaf0;
+    --mobile-green:#4f7768;
+    --mobile-gold:#c79a52;
+    --mobile-coral:#c97962;
+  }
   html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
-  body{min-height:100svh;padding-bottom:env(safe-area-inset-bottom);background:#07111f}
+  body{min-height:100svh;padding-bottom:env(safe-area-inset-bottom);background:var(--mobile-bg);color:var(--mobile-ink)}
 
-  header{height:50px;min-height:50px;padding:6px 8px;gap:6px;position:sticky;top:0;z-index:50;background:rgba(7,17,31,.97);backdrop-filter:blur(12px)}
+  header{height:50px;min-height:50px;padding:6px 8px;gap:6px;position:sticky;top:0;z-index:50;background:#243b45;backdrop-filter:blur(12px);border-bottom:1px solid #d2b278}
   .brand{gap:7px;min-width:0;flex:1}
-  .brandmark{width:31px;height:31px;padding:0;display:grid;place-items:center;font-size:16px;border-radius:9px;flex-shrink:0}
+  .brandmark{width:31px;height:31px;padding:0;display:grid;place-items:center;font-size:16px;border-radius:9px;flex-shrink:0;background:#c79a52;color:#243b45;box-shadow:none}
   .brand .eyebrow{display:none}
-  h1{font-size:11px;line-height:1.1;letter-spacing:.35px;white-space:nowrap}
+  h1{font-size:11px;line-height:1.1;letter-spacing:.35px;white-space:nowrap;color:#fffaf0}
   header nav{gap:4px;flex-wrap:nowrap;max-width:none}
-  header nav button{min-width:31px;min-height:31px;padding:5px 6px;font-size:9px;border-radius:8px}
+  header nav button{min-width:31px;min-height:31px;padding:5px 6px;font-size:9px;border-radius:8px;background:#31515a;color:#fffaf0;border:1px solid #55716f}
   #soundBtn,#saveBtn,#newBtn{font-size:0}
   #soundBtn::after{content:'♫';font-size:15px}
   #saveBtn::after{content:'↧';font-size:15px}
@@ -27,83 +33,88 @@
   .left{order:2;width:100%;padding:0 7px}
   .right{order:3;width:100%;padding:0 7px}
 
-  /* BOARD FULL WIDTH — cocok untuk viewport Android 9:16 */
-  .board-wrap{width:100vw;max-width:none;margin:0;padding:5px;border-radius:0;background:linear-gradient(145deg,#ffb74d 0%,#ef5350 28%,#7e57c2 62%,#26a69a 100%);box-shadow:0 10px 28px rgba(0,0,0,.45)}
-  .board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;gap:2px;padding:3px;border-radius:9px;background:#182438}
+  /* Bingkai papan: satu keluarga warna, bukan gradient pelangi */
+  .board-wrap{width:100vw;max-width:none;margin:0;padding:5px;border-radius:0;background:#c79a52;box-shadow:0 8px 22px rgba(36,50,58,.25)}
+  .board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;gap:2px;padding:3px;border-radius:9px;background:#24323a}
 
-  /* PETAK: nama tempat kecil, rapi, ikon hanya aksen visual */
-  .tile{min-width:0;min-height:0;padding:2px 1px;border-radius:3px;font-size:4.8px;line-height:1;text-align:center;background:linear-gradient(145deg,color-mix(in srgb,var(--group) 24%,#ffffff),color-mix(in srgb,var(--group) 10%,#f4f7f5));color:#16323b;box-shadow:inset 0 -2px rgba(0,0,0,.07);overflow:hidden}
-  .tile:hover:not(:disabled){outline:2px solid #fff;z-index:2}
-  .tile .strip{height:3px;opacity:1;filter:saturate(1.55) brightness(1.05)}
+  /* Petak: warna lembut + strip aksen */
+  .tile{min-width:0;min-height:0;padding:2px 1px;border-radius:3px;font-size:4.8px;line-height:1;text-align:center;background:#fffaf0;color:#31434a;box-shadow:inset 0 -2px rgba(36,50,58,.08)}
+  .tile:hover:not(:disabled){outline:2px solid #c79a52;z-index:2}
+  .tile .strip{height:3px;opacity:1;filter:none}
   .tile b{font-size:clamp(4.4px,1.18vw,6.2px);line-height:1.02;padding-top:4px;font-weight:800;letter-spacing:-.18px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
-  .tile .symbol{font-size:clamp(7px,1.9vw,11px);line-height:1;margin:1px 0;filter:saturate(1.08);text-shadow:0 1px 1px rgba(0,0,0,.12)}
-  .tile .price{font-size:clamp(3.8px,.85vw,5px);line-height:1;font-weight:800;white-space:nowrap}
-  .tile.corner{background:linear-gradient(145deg,#fff3cd,#ffe0b2);color:#4a2a12}
-  .tile.selected{outline:2px solid #fff;z-index:3}
+  .tile .symbol{font-size:clamp(7px,1.9vw,11px);line-height:1;margin:1px 0;filter:none;text-shadow:none}
+  .tile .price{font-size:clamp(3.8px,.85vw,5px);line-height:1;font-weight:800;white-space:nowrap;color:#66736f}
+  .tile.corner{background:#f5e3bf;color:#4d3b27}
+  .tile.selected{outline:2px solid #c79a52;z-index:3}
   .token{width:13px;height:13px;font-size:7px}
   .owner{width:5px;height:5px;right:1px;top:5px}
-  .owned-tile{box-shadow:inset 0 0 0 1.5px var(--tile-owner),inset 0 -2px rgba(0,0,0,.07)}
+  .owned-tile{box-shadow:inset 0 0 0 1.5px var(--tile-owner),inset 0 -2px rgba(36,50,58,.07)}
   .owner-flag{right:1px;top:4px;padding:1px 2px;font-size:4.5px;border-radius:2px}
   .owned-tile>b{font-size:clamp(4.1px,1.08vw,5.7px);padding-right:6px;padding-top:4px;line-height:1.02}
   .owned-tile .price{font-size:4px}
   .building-stage{font-size:3.7px;letter-spacing:0}
   .building-svg{width:11px;height:11px}
 
-  .center{padding:6px;gap:4px;border-radius:7px;overflow:hidden;background:radial-gradient(circle at 50% 38%,#244e66,#12253d 70%,#0d1a2b);border-color:#3b6d78}
-  .center:before{width:74%;height:74%;border-color:rgba(255,255,255,.1)}
+  /* Area tengah: navy lembut + cream, hanya satu warna aksen emas */
+  .center{padding:6px;gap:4px;border-radius:7px;overflow:hidden;background:#e8dcc4;border-color:#c79a52;color:#24323a}
+  .center:before{width:74%;height:74%;border-color:rgba(36,50,58,.12)}
   .center>.eyebrow{display:none}
-  .islands{font-size:clamp(12px,4vw,20px);letter-spacing:1px}
-  .logo{font-size:clamp(17px,5.8vw,28px);padding:0 6px;border-width:2px;letter-spacing:-1px;box-shadow:3px 3px 0 #07111f}
-  .subtitle{font-size:6px;letter-spacing:2.5px;margin-top:-2px}
-  .turn-pill{font-size:7px;padding:3px 8px;border-radius:20px}
+  .islands{font-size:clamp(12px,4vw,20px);letter-spacing:1px;filter:none}
+  .logo{font-size:clamp(17px,5.8vw,28px);padding:0 6px;letter-spacing:-1px;background:#243b45;color:#fffaf0;border:2px solid #c79a52;transform:rotate(-2deg);box-shadow:3px 3px 0 rgba(36,50,58,.2)}
+  .subtitle{font-size:6px;letter-spacing:2.5px;margin-top:-2px;color:#68756f}
+  .turn-pill{font-size:7px;padding:3px 8px;border-radius:20px;background:#fffaf0;border:1px solid #c79a52;color:#4f7768;box-shadow:none}
 
   .dice{--cube-size:27px;--cube-depth:13.5px;gap:7px;min-height:34px;padding:2px}
-  .die{width:28px;height:28px;border-radius:6px;font-size:22px;box-shadow:0 3px 0 #bdc8cc,0 6px 12px #0004}
-  .dice-face{padding:3px;gap:1px;border-radius:4px}
-  .dice-result{font-size:7px;margin-top:-2px;min-height:8px}
-  .status{max-width:190px;min-height:0;font-size:7px;line-height:1.2;margin:0 auto}
+  .die{width:28px;height:28px;border-radius:6px;font-size:22px;background:#fffaf0;color:#24323a;box-shadow:0 3px 0 #c9bfae,0 6px 12px rgba(36,50,58,.18)}
+  .dice-face{padding:3px;gap:1px;border-radius:4px;background:#fffaf0;border-color:#c9bfae}
+  .pip.on{background:#243b45}
+  .dice-result{font-size:7px;margin-top:-2px;min-height:8px;color:#a47735}
+  .status{max-width:190px;min-height:0;font-size:7px;line-height:1.2;margin:0 auto;color:#53625e}
 
   .actions{gap:4px;justify-content:center;width:100%}
-  .actions button{min-height:29px;padding:5px 7px;font-size:7.5px;border-radius:7px}
+  .actions button{min-height:29px;padding:5px 7px;font-size:7.5px;border-radius:7px;background:#fffaf0;color:#33484e;border:1px solid #cbbfa9}
+  .actions .primary{background:#4f7768;color:#fffaf0;border-color:#4f7768;box-shadow:none}
   .deck-row{gap:8px;margin:0;justify-content:center}
-  .card-stack{width:56px;height:25px;border-width:1px;box-shadow:1px 2px 0 #d0dce2,2px 4px 0 #62879c,3px 5px 8px #0005}
+  .card-stack{width:56px;height:25px;border-width:1px;background:#4f7768;box-shadow:1px 2px 0 #d7c9ae,2px 4px 0 #a89573,3px 5px 8px rgba(36,50,58,.18)}
+  .card-stack.chance{background:#c97962}
   .card-stack>span{font-size:13px}
   .card-stack strong{font-size:4.5px;letter-spacing:.3px;margin-top:0}
-  .below{padding:5px 7px 0;font-size:6.5px;gap:3px}
+  .below{padding:5px 7px 0;font-size:6.5px;gap:3px;color:#6c7772}
   .below span{white-space:nowrap}
 
   .left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-  .left .section-title{display:flex;grid-column:1/-1;margin:0 2px;font-size:8px}
+  .left .section-title{display:flex;grid-column:1/-1;margin:0 2px;font-size:8px;color:#68756f}
   .left .tip{display:none}
-  .player{min-width:0;margin:0;padding:7px;border-radius:9px}
+  .player{min-width:0;margin:0;padding:7px;border-radius:9px;background:#fffaf0;border:1px solid #d9cdb8;box-shadow:0 3px 10px rgba(36,50,58,.08)}
+  .player.active{border-color:#4f7768;box-shadow:0 0 0 1px #4f7768 inset,0 5px 14px rgba(79,119,104,.18)}
   .player-top{gap:6px;align-items:center}
   .avatar{width:27px;height:27px;font-size:14px;flex-shrink:0}
-  .player strong{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tag{font-size:6.5px}
-  .money{font-size:14px;margin:5px 0 2px}
-  .stats{font-size:7px}
-  .player-cards-button{margin-top:6px;padding:5px 6px;font-size:8px}
-  .player-cards-button span{font-size:6.5px}
+  .player strong{font-size:10px;color:#30434a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tag{font-size:6.5px;color:#6c7772}
+  .money{font-size:14px;margin:5px 0 2px;color:#a47735}
+  .stats{font-size:7px;color:#71807a}
+  .player-cards-button{margin-top:6px;padding:5px 6px;font-size:8px;background:#f3eadb;color:#4f7768;border-color:#d6c9b1}
+  .player-cards-button span{font-size:6.5px;color:#78827d}
 
   .right{display:flex;flex-direction:column;gap:7px}
-  .right .panel{padding:10px;margin:0;border-radius:10px}
-  .right .section-title{font-size:8px;margin-bottom:6px}
-  .all-cards-button{font-size:8px;padding:7px}
+  .right .panel{padding:10px;margin:0;border-radius:10px;background:#fffaf0;border:1px solid #d9cdb8;box-shadow:0 3px 10px rgba(36,50,58,.08)}
+  .right .section-title{font-size:8px;margin-bottom:6px;color:#68756f}
+  .all-cards-button{font-size:8px;padding:7px;background:#e8dcc4;color:#4f7768;border-color:#cdbd9f}
   .prop-list{max-height:120px}
-  .prop-row{font-size:8px;padding:6px}
+  .prop-row{font-size:8px;padding:6px;background:#f3eadb;color:#34484e}
+  .prop-row span:last-child{color:#a47735}
+  .event-card{background:#fffaf0;color:#34484e}
+  .event-head{padding:7px;background:#4f7768;color:#fffaf0;font-size:8px}
   .event-body,.log{font-size:8px}
   .event-body{padding:9px 7px;min-height:0}
   .event-icon{font-size:18px}
   .log{max-height:115px}
+  .log time{color:#a47735}
   footer{display:none}
 
   .pawn-figure{scale:.58}
   .pawn-base{width:14px;height:5px;left:-7px}
   .pawn-name{font-size:5.5px;bottom:24px;max-width:62px;padding:1px 2px}
-
-  #cardReveal{padding:14px}
-  .reveal-stage{height:235px}
-  .flying-card{height:225px;width:198px}
 }
 
 @media (max-width:420px){
