@@ -1,113 +1,135 @@
-/* Mobile Android layout - papan sebagai fokus utama */
+/* ============================================================
+   MOBILE ANDROID — 9:16 GAME VIEW
+   Papan menjadi fokus utama, full width, tanpa memaksa desktop
+   menjadi kecil. Petak dibuat lebih lega, nama tempat ringkas,
+   warna grup lebih hidup, dan ikon tidak mengambil ruang.
+   ============================================================ */
 @media (max-width:760px){
+  :root{--mobile-side:0px}
   html,body{width:100%;max-width:100%;min-width:0;overflow-x:hidden}
-  body{min-height:100svh;padding-bottom:env(safe-area-inset-bottom);background:#08111d}
+  body{min-height:100svh;padding-bottom:env(safe-area-inset-bottom);background:#07111f}
 
-  header{height:52px;min-height:52px;padding:7px 9px;gap:6px;position:sticky;top:0;z-index:50;background:rgba(8,17,29,.96);backdrop-filter:blur(10px)}
+  header{height:50px;min-height:50px;padding:6px 8px;gap:6px;position:sticky;top:0;z-index:50;background:rgba(7,17,31,.97);backdrop-filter:blur(12px)}
   .brand{gap:7px;min-width:0;flex:1}
-  .brandmark{width:32px;height:32px;padding:0;display:grid;place-items:center;font-size:17px;border-radius:9px;flex-shrink:0}
+  .brandmark{width:31px;height:31px;padding:0;display:grid;place-items:center;font-size:16px;border-radius:9px;flex-shrink:0}
   .brand .eyebrow{display:none}
-  h1{font-size:11px;line-height:1.1;letter-spacing:.4px;white-space:nowrap}
+  h1{font-size:11px;line-height:1.1;letter-spacing:.35px;white-space:nowrap}
   header nav{gap:4px;flex-wrap:nowrap;max-width:none}
-  header nav button{min-width:32px;min-height:32px;padding:5px 7px;font-size:9px;border-radius:8px}
+  header nav button{min-width:31px;min-height:31px;padding:5px 6px;font-size:9px;border-radius:8px}
   #soundBtn,#saveBtn,#newBtn{font-size:0}
   #soundBtn::after{content:'♫';font-size:15px}
   #saveBtn::after{content:'↧';font-size:15px}
   #newBtn::after{content:'+';font-size:17px}
-  #helpBtn{width:32px;padding:5px 0}
+  #helpBtn{width:31px;padding:5px 0}
 
-  .layout{display:flex;flex-direction:column;width:100%;max-width:100%;margin:0;padding:6px 6px 14px;gap:9px}
-  .layout>section{order:1;width:100%}
-  .left{order:2;width:100%}
-  .right{order:3;width:100%}
+  /* ========================================================
+     9:16 ANDROID STAGE
+     Papan mengikuti lebar viewport, bukan lebar kolom desktop.
+     Papan tetap persegi agar petak Monopoly tidak terdistorsi.
+     ======================================================== */
+  .layout{display:flex;flex-direction:column;width:100%;max-width:none;margin:0;padding:0 0 14px;gap:10px;min-height:calc(100svh - 50px)}
+  .layout>section{order:1;width:100%;min-width:0}
+  .left{order:2;width:100%;padding:0 7px}
+  .right{order:3;width:100%;padding:0 7px}
 
-  /* BOARD: hampir selebar layar */
-  .board-wrap{width:100%;max-width:none;padding:4px;border-radius:14px;background:linear-gradient(145deg,#526d83,#172b3c 48%,#314b61);box-shadow:0 12px 30px rgba(0,0,0,.45)}
-  .board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;gap:2px;padding:3px;border-radius:10px}
-  .tile{min-width:0;min-height:0;padding:2px 1px;border-radius:2px;font-size:5.5px;line-height:1.02}
-  .tile .strip{height:4px}
-  .tile b{font-size:clamp(5px,1.35vw,7.5px);line-height:1.03;padding-top:3px}
-  .tile .symbol{font-size:clamp(9px,2.5vw,15px)}
-  .tile .price{font-size:clamp(4px,1vw,5.5px)}
-  .tile.corner b{font-size:clamp(5px,1.5vw,8px)}
-  .token{width:15px;height:15px;font-size:8px}
-  .owner{width:5px;height:5px;right:1px;top:6px}
+  /* BOARD FULL WIDTH */
+  .board-wrap{width:100vw;max-width:none;margin:0;padding:5px;border-radius:0;background:linear-gradient(145deg,#ffb74d 0%,#ef5350 28%,#7e57c2 62%,#26a69a 100%);box-shadow:0 10px 28px rgba(0,0,0,.45)}
+  .board{width:100%;max-width:none;height:auto;aspect-ratio:1/1;gap:2px;padding:3px;border-radius:9px;background:#182438}
 
-  /* Area tengah dibuat lebih mirip board game mobile */
-  .center{padding:7px;gap:5px;border-radius:8px;overflow:hidden}
-  .center:before{width:72%;height:72%}
+  /* Petak lebih bersih: nama kecil, ikon hanya aksen */
+  .tile{min-width:0;min-height:0;padding:2px 1px;border-radius:3px;font-size:4.8px;line-height:1;text-align:center;background:color-mix(in srgb,var(--group) 13%,#f7faf8);color:#16323b;box-shadow:inset 0 -2px rgba(0,0,0,.07);overflow:hidden}
+  .tile:hover:not(:disabled){outline:2px solid #fff;z-index:2}
+  .tile .strip{height:3px;opacity:1}
+  .tile b{font-size:clamp(4.4px,1.18vw,6.2px);line-height:1.02;padding-top:4px;font-weight:800;letter-spacing:-.18px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+  .tile .symbol{font-size:clamp(7px,1.9vw,11px);line-height:1;margin:1px 0;filter:saturate(1.08);text-shadow:0 1px 1px rgba(0,0,0,.12)}
+  .tile .price{font-size:clamp(3.8px,.85vw,5px);line-height:1;font-weight:800;white-space:nowrap}
+  .tile.corner{background:linear-gradient(145deg,#fff3cd,#ffe0b2);color:#4a2a12}
+  .tile.selected{outline:2px solid #fff;z-index:3}
+  .token{width:13px;height:13px;font-size:7px}
+  .owner{width:5px;height:5px;right:1px;top:5px}
+  .owned-tile{box-shadow:inset 0 0 0 1.5px var(--tile-owner),inset 0 -2px rgba(0,0,0,.07)}
+  .owner-flag{right:1px;top:4px;padding:1px 2px;font-size:4.5px;border-radius:2px}
+  .owned-tile>b{font-size:clamp(4.1px,1.08vw,5.7px);padding-right:6px;padding-top:4px;line-height:1.02}
+  .owned-tile .price{font-size:4px}
+  .building-stage{font-size:3.7px;letter-spacing:0}
+  .building-svg{width:11px;height:11px}
+
+  /* Tengah papan tidak terlalu padat */
+  .center{padding:6px;gap:4px;border-radius:7px;overflow:hidden;background:radial-gradient(circle at 50% 38%,#244e66,#12253d 70%,#0d1a2b);border-color:#3b6d78}
+  .center:before{width:74%;height:74%;border-color:rgba(255,255,255,.1)}
   .center>.eyebrow{display:none}
-  .islands{font-size:clamp(15px,5vw,23px);letter-spacing:2px}
-  .logo{font-size:clamp(19px,6.4vw,31px);padding:0 7px;border-width:2px;letter-spacing:-1px;box-shadow:3px 4px 0 var(--ink)}
-  .subtitle{font-size:7px;letter-spacing:3px;margin-top:-2px}
-  .turn-pill{font-size:8px;padding:4px 9px;border-radius:20px}
+  .islands{font-size:clamp(12px,4vw,20px);letter-spacing:1px}
+  .logo{font-size:clamp(17px,5.8vw,28px);padding:0 6px;border-width:2px;letter-spacing:-1px;box-shadow:3px 3px 0 #07111f}
+  .subtitle{font-size:6px;letter-spacing:2.5px;margin-top:-2px}
+  .turn-pill{font-size:7px;padding:3px 8px;border-radius:20px}
 
-  .dice{--cube-size:30px;--cube-depth:15px;gap:9px;min-height:40px;padding:3px}
-  .die{width:31px;height:31px;border-radius:7px;font-size:25px}
-  .dice-face{padding:4px;gap:2px;border-radius:5px}
-  .dice-result{font-size:8px;margin-top:-3px;min-height:10px}
-  .status{max-width:210px;min-height:0;font-size:8px;line-height:1.25;margin:0 auto}
+  .dice{--cube-size:27px;--cube-depth:13.5px;gap:7px;min-height:34px;padding:2px}
+  .die{width:28px;height:28px;border-radius:6px;font-size:22px;box-shadow:0 3px 0 #bdc8cc,0 6px 12px #0004}
+  .dice-face{padding:3px;gap:1px;border-radius:4px}
+  .dice-result{font-size:7px;margin-top:-2px;min-height:8px}
+  .status{max-width:190px;min-height:0;font-size:7px;line-height:1.2;margin:0 auto}
 
-  /* Tombol tetap besar untuk sentuhan, tetapi tidak memenuhi layar */
-  .actions{gap:5px;justify-content:center;width:100%}
-  .actions button{min-height:30px;padding:6px 8px;font-size:8px;border-radius:7px}
-  .deck-row{gap:10px;margin:1px 0 0;justify-content:center}
-  .card-stack{width:62px;height:28px;border-width:1px;box-shadow:1px 2px 0 #d0dce2,2px 4px 0 #62879c,3px 6px 0 #c4d4dc}
-  .card-stack>span{font-size:15px}
-  .card-stack strong{font-size:5px;letter-spacing:.4px;margin-top:0}
-  .below{padding:6px 2px 0;font-size:7px;gap:4px}
+  .actions{gap:4px;justify-content:center;width:100%}
+  .actions button{min-height:29px;padding:5px 7px;font-size:7.5px;border-radius:7px}
+  .deck-row{gap:8px;margin:0;justify-content:center}
+  .card-stack{width:56px;height:25px;border-width:1px;box-shadow:1px 2px 0 #d0dce2,2px 4px 0 #62879c,3px 5px 8px #0005}
+  .card-stack>span{font-size:13px}
+  .card-stack strong{font-size:4.5px;letter-spacing:.3px;margin-top:0}
+  .below{padding:5px 7px 0;font-size:6.5px;gap:3px}
   .below span{white-space:nowrap}
 
-  /* Pemain menjadi ringkas, bukan panel besar */
-  .left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-  .left .section-title{display:flex;grid-column:1/-1;margin:0 2px;font-size:9px}
+  /* Player cards tetap ada tetapi ringkas */
+  .left{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .left .section-title{display:flex;grid-column:1/-1;margin:0 2px;font-size:8px}
   .left .tip{display:none}
-  .player{min-width:0;margin:0;padding:8px;border-radius:10px}
-  .player-top{gap:7px;align-items:center}
-  .avatar{width:29px;height:29px;font-size:15px;flex-shrink:0}
-  .player strong{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .tag{font-size:7px}
-  .money{font-size:15px;margin:6px 0 3px}
-  .stats{font-size:8px}
-  .player-cards-button{margin-top:7px;padding:6px 7px;font-size:8.5px}
-  .player-cards-button span{font-size:7px}
+  .player{min-width:0;margin:0;padding:7px;border-radius:9px}
+  .player-top{gap:6px;align-items:center}
+  .avatar{width:27px;height:27px;font-size:14px;flex-shrink:0}
+  .player strong{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tag{font-size:6.5px}
+  .money{font-size:14px;margin:5px 0 2px}
+  .stats{font-size:7px}
+  .player-cards-button{margin-top:6px;padding:5px 6px;font-size:8px}
+  .player-cards-button span{font-size:6.5px}
 
-  /* Info tambahan tetap ada, tetapi jauh lebih padat */
-  .right{display:flex;flex-direction:column;gap:8px}
-  .right .panel{padding:11px;margin:0;border-radius:11px}
-  .right .section-title{font-size:9px;margin-bottom:7px}
-  .all-cards-button{font-size:9px;padding:8px}
-  .prop-list{max-height:130px}
-  .prop-row{font-size:9px;padding:7px}
-  .event-body,.log{font-size:9px}
-  .event-body{padding:11px 8px;min-height:0}
-  .event-icon{font-size:22px}
-  .log{max-height:130px}
+  .right{display:flex;flex-direction:column;gap:7px}
+  .right .panel{padding:10px;margin:0;border-radius:10px}
+  .right .section-title{font-size:8px;margin-bottom:6px}
+  .all-cards-button{font-size:8px;padding:7px}
+  .prop-list{max-height:120px}
+  .prop-row{font-size:8px;padding:6px}
+  .event-body,.log{font-size:8px}
+  .event-body{padding:9px 7px;min-height:0}
+  .event-icon{font-size:18px}
+  .log{max-height:115px}
   footer{display:none}
 
-  /* Pion diperkecil agar tidak menutup nama kota */
-  .pawn-figure{scale:.62}
-  .pawn-base{width:15px;height:6px;left:-7.5px}
-  .pawn-name{font-size:6px;bottom:25px;max-width:70px;padding:2px 3px}
+  .pawn-figure{scale:.58}
+  .pawn-base{width:14px;height:5px;left:-7px}
+  .pawn-name{font-size:5.5px;bottom:24px;max-width:62px;padding:1px 2px}
 
-  #cardReveal{padding:16px}
-  .reveal-stage{height:250px}
-  .flying-card{height:240px;width:210px}
+  #cardReveal{padding:14px}
+  .reveal-stage{height:235px}
+  .flying-card{height:225px;width:198px}
 }
 
 @media (max-width:420px){
-  header{height:49px;min-height:49px}
-  .layout{padding:5px 5px 12px;gap:8px}
-  .board-wrap{padding:3px;border-radius:12px}
-  .board{gap:1.5px;padding:2.5px}
-  .center{padding:5px;gap:4px}
-  .logo{font-size:clamp(17px,6vw,27px)}
-  .islands{font-size:clamp(13px,4.5vw,20px)}
-  .dice{gap:7px}
-  .die{width:28px;height:28px;font-size:22px}
-  .actions button{min-height:28px;padding:5px 6px}
-  .card-stack{width:55px;height:26px}
-  .left{gap:5px}
-  .player{padding:7px}
-  .money{font-size:14px}
+  header{height:48px;min-height:48px}
+  .layout{min-height:calc(100svh - 48px)}
+  .board-wrap{padding:4px}
+  .board{gap:1.5px;padding:2px}
+  .tile b{font-size:clamp(4.1px,1.12vw,5.7px)}
+  .tile .symbol{font-size:clamp(6.5px,1.75vw,10px)}
+  .tile .price{font-size:3.7px}
+  .center{padding:5px;gap:3px}
+  .logo{font-size:clamp(16px,5.6vw,26px)}
+  .islands{font-size:clamp(11px,3.8vw,18px)}
+  .dice{gap:6px}
+  .die{width:26px;height:26px;font-size:20px}
+  .actions button{min-height:27px;padding:4px 6px}
+  .card-stack{width:52px;height:24px}
+  .left{gap:5px;padding:0 6px}
+  .player{padding:6px}
+  .money{font-size:13px}
+  .right{padding:0 6px}
 }
